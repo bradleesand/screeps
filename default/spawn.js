@@ -11,11 +11,18 @@ var config = {
       limit: 5
     }
   ],
-  parts: {
-    CARRY: 50,
-    WORK: 100,
-    MOVE: 50
-  }
+  parts: [
+    {
+        val: CARRY,
+        cost: 50
+    }, {
+        val: WORK,
+        cost: 100
+    }, {
+        val: MOVE,
+        cost: 50
+    }
+  ]
 };
 
 var buildWorker = function (spawn, role) {
@@ -25,15 +32,15 @@ var buildWorker = function (spawn, role) {
     }}).length;
   var energy = 300 + extensions * 50;
   var body = [];
-  var failed;
-
-  while (energy > 0 && failed < _.size(config.parts)) {
-    var part = _.keys(config.parts)[body.length % _.size(config.parts)];
-    var cost = config.parts[part];
-    if(energy - cost >= 0) {
-      body.push(part);
+  var skip = 0;
+  
+  while (energy > 0 && skip < config.parts.length) {
+    var part = config.parts[body.length % config.parts.length];
+    if(energy - part.cost >= 0) {
+      body.push(part.val);
+      energy -= part.cost;
     } else {
-      failed++;
+      skip++;
     }
   }
 
