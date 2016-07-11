@@ -2,7 +2,7 @@ var config = {
   workers: [
     {
       role: 'harvester',
-      limit: 1
+      limit: 2
     }, {
       role: 'upgrader',
       limit: 3
@@ -27,10 +27,12 @@ var config = {
 
 var buildWorker = function (spawn, role) {
   var extensions = spawn.room.find(FIND_STRUCTURES, {
-    filter: (structure) => {
-      return structure.structureType == STRUCTURE_EXTENSION;
-    }}).length;
-  var energy = 300 + extensions * 50;
+      filter: (structure) => {
+          return structure.structureType === STRUCTURE_EXTENSION;
+      }});
+  var energy = _.max([200, spawn.energy]) + _.reduce(extensions,
+                                                        (sum, extension) => {return sum + extension.energy},
+                                                        0);
   var body = [];
   var skip = 0;
   
